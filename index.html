@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenAI Learning Module — Zero to Deployment</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;background:#f9f8f5;min-height:100vh}
+.header{background:#fff;border-bottom:1px solid #e5e3dc;padding:1rem 2rem;position:sticky;top:0;z-index:100}
+.header-inner{max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.header-title{font-size:16px;font-weight:600;color:#1a1a1a}
+.header-sub{font-size:12px;color:#888}
+.main{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+.intro{margin-bottom:1.5rem}
+.intro-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.intro-title{font-size:24px;font-weight:600;color:#1a1a1a;margin-bottom:6px}
+.intro-sub{font-size:14px;color:#666}
+
+.tabs{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap}
+.tb{padding:8px 16px;border-radius:8px;border:1px solid #d5d3cc;background:#fff;color:#666;font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s}
+.tb.on{background:#f0ede6;color:#1a1a1a;border-color:#b5b3ac;font-weight:500}
+.tb:hover{background:#f5f4f0}
+.panel{display:none}.panel.on{display:block}
+
+.ptrack{height:5px;background:#e8e6e0;border-radius:3px;margin-bottom:14px}
+.pfill{height:5px;background:#2d7a5f;border-radius:3px;transition:width .4s}
+
+.lnav{display:flex;gap:5px;margin-bottom:1rem;flex-wrap:wrap}
+.ln{padding:5px 11px;border-radius:8px;border:1px solid #d5d3cc;background:#fff;color:#888;font-size:12px;cursor:pointer;font-family:inherit;transition:all .12s}
+.ln.on{background:#f0ede6;color:#1a1a1a;border-color:#b5b3ac;font-weight:600}
+.ln.done{border-color:#2d7a5f;color:#2d7a5f}
+
+.lbody{background:#fff;border:1px solid #e5e3dc;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.ltitle{font-size:18px;font-weight:600;margin-bottom:6px;color:#1a1a1a}
+.lsub{font-size:12px;color:#888;margin-bottom:12px}
+.badges{margin-bottom:14px}
+.badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;margin-right:5px;margin-bottom:4px;font-weight:500}
+.bb{background:#dbeafe;color:#1e40af}
+.bt{background:#dcfce7;color:#166534}
+.ba{background:#fef3c7;color:#92400e}
+.bp{background:#ede9fe;color:#5b21b6}
+.bc{background:#fee2e2;color:#991b1b}
+.bg{background:#d1fae5;color:#065f46}
+
+.lc{font-size:14px;color:#444;line-height:1.8}
+.lc p{margin-bottom:12px}
+.lc h4{font-size:14px;font-weight:600;color:#1a1a1a;margin:16px 0 8px}
+.lc ul{padding-left:1.3rem;margin-bottom:12px}
+.lc li{margin-bottom:6px}
+.abox{background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:13px;color:#0c4a6e;line-height:1.65}
+.albl{font-size:11px;font-weight:700;color:#0369a1;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.nbtn{padding:9px 20px;border-radius:8px;border:1px solid #d5d3cc;background:#fff;font-size:13px;cursor:pointer;font-family:inherit;color:#1a1a1a;margin-top:8px;font-weight:500}
+.nbtn:hover{background:#f5f4f0}
+
+.glist{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:1rem}
+.gc{background:#fff;border:1px solid #e5e3dc;border-radius:10px;padding:14px;cursor:pointer;transition:all .15s}
+.gc:hover{border-color:#b5b3ac;background:#fafaf7}
+.gc.open{border-color:#3b82f6;background:#f0f9ff}
+.gterm{font-size:13px;font-weight:600;margin-bottom:4px;color:#1a1a1a}
+.gshort{font-size:12px;color:#888}
+.gfull{font-size:12px;color:#444;line-height:1.65;margin-top:10px;padding-top:10px;border-top:1px solid #e5e3dc;display:none}
+.gc.open .gfull{display:block}
+
+.sandbox-box{background:#fff;border:1px solid #e5e3dc;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.tsel{width:100%;padding:9px 12px;font-size:13px;margin-bottom:10px;border:1px solid #d5d3cc;border-radius:8px;background:#fff;color:#1a1a1a;font-family:inherit}
+.hint{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:9px 14px;font-size:12px;color:#166534;margin-bottom:12px;line-height:1.55}
+.ptxt{width:100%;min-height:100px;padding:10px 14px;font-size:13px;border:1px solid #d5d3cc;border-radius:8px;background:#fff;color:#1a1a1a;font-family:inherit;resize:vertical;line-height:1.6;margin-bottom:10px}
+.ptxt:focus{outline:none;border-color:#3b82f6}
+.rbtn{padding:9px 20px;border-radius:8px;border:1px solid #d5d3cc;background:#1a1a1a;font-size:13px;cursor:pointer;font-family:inherit;color:#fff;margin-bottom:12px;font-weight:500}
+.rbtn:hover{background:#333}
+.rbtn:disabled{opacity:.5;cursor:default;background:#888}
+.resp{background:#f9f8f5;border:1px solid #e5e3dc;border-radius:8px;padding:14px;font-size:13px;line-height:1.75;white-space:pre-wrap;display:none;margin-top:4px;color:#1a1a1a}
+.resp.on{display:block}
+.ldg{font-size:12px;color:#888;margin-bottom:6px;display:none}
+.ldg.on{display:block}
+.starters-box{background:#f9f8f5;border:1px solid #e5e3dc;border-radius:10px;padding:14px;margin-top:1rem}
+.starter-btn{width:100%;background:#fff;border:1px solid #e5e3dc;border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit;color:#666;text-align:left;margin-bottom:6px;transition:all .12s}
+.starter-btn:hover{background:#f5f4f0;border-color:#b5b3ac;color:#1a1a1a}
+.starter-btn:last-child{margin-bottom:0}
+
+.qt{font-size:15px;font-weight:500;margin-bottom:14px;line-height:1.55;color:#1a1a1a}
+.qopts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.qo{background:#fff;border:1px solid #d5d3cc;border-radius:8px;padding:10px 14px;font-size:13px;cursor:pointer;text-align:left;font-family:inherit;color:#1a1a1a;transition:all .12s;line-height:1.4}
+.qo:hover{background:#f5f4f0}
+.qo.ok{background:#f0fdf4;border-color:#2d7a5f;color:#166534;font-weight:500}
+.qo.ng{background:#fef2f2;border-color:#ef4444;color:#991b1b}
+.qfb{font-size:13px;color:#444;line-height:1.65;padding:12px 16px;background:#f9f8f5;border:1px solid #e5e3dc;border-radius:8px;display:none;margin-bottom:12px}
+.qfb.on{display:block}
+.nxt{font-size:13px;padding:8px 18px;border:1px solid #d5d3cc;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;color:#1a1a1a;display:none;font-weight:500}
+.nxt.on{display:inline-block}
+.nxt:hover{background:#f5f4f0}
+.pbar{height:5px;background:#e8e6e0;border-radius:3px;margin-bottom:16px}
+.pb2{height:5px;background:#2d7a5f;border-radius:3px;transition:width .3s}
+.scbox{text-align:center;padding:2.5rem 1rem}
+.scn{font-size:42px;font-weight:700;color:#1a1a1a}
+.scl{font-size:15px;color:#666;margin-top:6px}
+
+.note-box{background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:1rem;line-height:1.5}
+
+.sec-label{font-size:11px;font-weight:600;letter-spacing:.06em;color:#888;text-transform:uppercase;margin:1.5rem 0 10px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <div class="header-title">GenAI Learning Module</div>
+      <div class="header-sub">Zero to Deployment · Based on Generative AI in Action — Amit Bahree (Manning, 2024)</div>
+    </div>
+    <div style="font-size:12px;color:#888">13 lessons · 31-term glossary · Live sandbox · 12-question quiz</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="intro">
+    <div class="intro-label">Complete beginner · 1st year engineering student</div>
+    <div class="intro-title">AI / ML / GenAI — from absolute zero</div>
+    <div class="intro-sub">Everything self-contained. No links to click. No account needed. Just read, practice, and test yourself.</div>
+  </div>
+
+  <div class="note-box">
+    <strong>Live sandbox note:</strong> The prompt sandbox requires an internet connection to reach the Claude API. All lessons, glossary, and quiz work fully offline.
+  </div>
+
+  <div class="tabs">
+    <button class="tb on" onclick="sw('lessons')">Lessons</button>
+    <button class="tb" onclick="sw('glossary')">Glossary</button>
+    <button class="tb" onclick="sw('sandbox')">Prompt sandbox</button>
+    <button class="tb" onclick="sw('quiz')">Quiz</button>
+  </div>
+
+  <!-- LESSONS -->
+  <div id="p-lessons" class="panel on">
+    <div style="font-size:13px;color:#666;margin-bottom:10px">Work through lessons in order — each builds on the previous. Your progress is tracked below.</div>
+    <div class="ptrack"><div class="pfill" id="lp" style="width:0%"></div></div>
+    <div class="lnav" id="lnav"></div>
+    <div id="lbody"></div>
+  </div>
+
+  <!-- GLOSSARY -->
+  <div id="p-glossary" class="panel">
+    <div style="font-size:13px;color:#666;margin-bottom:1rem">Click any term to expand the full plain-English definition. No jargon inside the definitions.</div>
+    <div class="glist" id="glist"></div>
+  </div>
+
+  <!-- SANDBOX -->
+  <div id="p-sandbox" class="panel">
+    <div style="font-size:13px;color:#666;margin-bottom:1rem">Write a prompt, pick a technique, and run it live. Claude responds right here.</div>
+    <div class="sandbox-box">
+      <div style="font-size:13px;color:#666;margin-bottom:8px;font-weight:500">Select a prompting technique:</div>
+      <select class="tsel" id="tsel" onchange="uh()">
+        <option value="z">Zero-shot — ask directly, no examples</option>
+        <option value="f">Few-shot — show examples before asking</option>
+        <option value="c">Chain-of-thought — ask it to think step by step</option>
+        <option value="r">Role prompting — give Claude a specific persona</option>
+        <option value="t">Template prompting — define exact output structure</option>
+        <option value="s">System prompt — set context and constraints for the session</option>
+      </select>
+      <div class="hint" id="hint"></div>
+      <div style="font-size:13px;color:#666;margin-bottom:8px;font-weight:500">Your prompt:</div>
+      <textarea class="ptxt" id="pinp" placeholder="Type your prompt here..."></textarea>
+      <div><button class="rbtn" id="rbtn" onclick="runp()">Run prompt →</button></div>
+      <div class="ldg" id="ldg">Sending to Claude API...</div>
+      <div class="resp" id="resp"></div>
+    </div>
+    <div class="starters-box">
+      <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:#444">Starter prompts — click to load:</div>
+      <div id="starters"></div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="p-quiz" class="panel">
+    <div style="font-size:13px;color:#666;margin-bottom:1rem">12 applied-scenario questions. Each wrong answer shows a full explanation.</div>
+    <div id="qcon"></div>
+  </div>
+</div>
+
+<script>
+const L=[
+{title:"What is AI? Starting from absolute zero",sub:"Lesson 1 of 13 · The big picture",badges:["bb:Absolute beginner","bt:Foundation"],content:`<p>AI stands for <strong>Artificial Intelligence</strong>. Strip away all the hype and it means one thing: a computer program that can learn from examples and use that learning to handle situations it has never seen before.</p><h4>What makes AI different from a normal program?</h4><p>A regular calculator: a human programmer wrote a rule for every single situation. "If user types 2+2, return 4." Every case is hard-coded.</p><p>An AI program: instead of writing rules, you show it thousands of examples. It figures out the patterns on its own. Then it handles new cases — including ones the programmer never anticipated.</p><div class="abox"><div class="albl">Analogy</div>Teaching a child to recognize dogs. You never explain: "four legs, fur, tail, barks." You show 200 pictures and say "dog" each time. Eventually they recognize a dog breed they've never seen before. That's exactly how AI learning works.</div><h4>Where you already use AI every day</h4><ul><li>Google search autocomplete — predicts what you'll type next</li><li>YouTube / Spotify recommendations — learns what you like</li><li>Face unlock on your phone — recognizes your specific face</li><li>Gmail spam filter — detects junk without you defining every rule</li><li>Google Translate — converts languages in real time</li><li>ChatGPT, Claude, Gemini — converse in natural language</li></ul><h4>Narrow AI vs General AI</h4><ul><li><strong>Narrow AI</strong> — does one specific thing extremely well. This is everything that exists today. A chess-playing AI cannot drive a car.</li><li><strong>General AI (AGI)</strong> — can do anything a human can. Does not exist yet.</li></ul><h4>Why AI is causing disruption right now</h4><p>AI has existed for 70 years. What changed recently? Two things: (1) we now have vastly more data to train on — the internet — and (2) computing power is cheap enough to train enormous models. These two shifts unlocked Generative AI.</p>`},
+{title:"Machine learning — the engine inside AI",sub:"Lesson 2 of 13 · How AI actually learns",badges:["bb:Core concept","ba:How it works"],content:`<p><strong>Machine Learning (ML)</strong> is the most common technique used to build AI. Almost everything called "AI" today — including ChatGPT, image recognition, fraud detection — runs on ML under the hood.</p><h4>The three ingredients</h4><ul><li><strong>Data</strong> — examples the model learns from (photos, text, numbers, sensor readings)</li><li><strong>Algorithm</strong> — the mathematical process that finds patterns in the data</li><li><strong>Model</strong> — the trained output: a function that takes new inputs and makes predictions</li></ul><div class="abox"><div class="albl">Analogy</div>Predicting exam scores. You collect data: 1,000 students' study hours and their actual scores. The algorithm finds the pattern. The trained model can then predict: "a student studying 5 hours will likely score around 68." New data in → prediction out.</div><h4>Three types of machine learning</h4><ul><li><strong>Supervised learning</strong> — you provide labeled data. "This photo = cat. This one = dog." Model learns to classify new photos. Used in: spam filters, medical diagnosis, price prediction, fraud detection.</li><li><strong>Unsupervised learning</strong> — no labels. The model finds hidden structure on its own. Used in: customer segmentation, anomaly detection, topic discovery.</li><li><strong>Reinforcement learning</strong> — model learns by trial and error. Gets rewards for good actions, penalties for bad ones. Used in: game-playing AI, robotics, and making ChatGPT safe (RLHF).</li></ul><h4>Training vs inference — the most important distinction</h4><p><strong>Training</strong>: the model is learning. It processes millions of examples, adjusts its internal numbers (weights) over and over until it gets good. Expensive and slow — happens once.</p><p><strong>Inference</strong>: the trained model is deployed and being used. You type a question, it gives an answer in milliseconds. This is what happens every time you use ChatGPT.</p><div class="abox"><div class="albl">Analogy</div>Training = studying for an exam (takes weeks, costs energy). Inference = sitting the exam (takes minutes, uses what was learned). You only study once; you can take many exams.</div><h4>The key limitation of conventional ML</h4><p>Traditional ML models are trained on a fixed set of input features. If you want to add a new variable later, you must retrain the entire model from scratch. Generative AI (Lesson 4) solved this problem in a completely different way.</p>`},
+{title:"Deep learning and neural networks",sub:"Lesson 3 of 13 · The architecture powering modern AI",badges:["bp:Architecture","bb:Neural nets"],content:`<p><strong>Deep learning</strong> is a type of machine learning using structures loosely inspired by the human brain, called <strong>neural networks</strong>. It powers image recognition, voice assistants, translation, and all modern large language models.</p><h4>What is a neural network?</h4><p>A series of mathematical layers. Each layer takes the previous layer's output, transforms it, and passes it forward. "Deep" means: many layers stacked. Each layer extracts a more abstract, meaningful representation of the data.</p><div class="abox"><div class="albl">Analogy — recognizing a cat in a photo</div>Layer 1: detects raw edges and color patches. Layer 2: combines edges into shapes. Layer 3: combines shapes into parts (eyes, ears, paws). Layer 4: combines parts into the concept "cat." Deep = many layers of increasingly abstract understanding.</div><h4>Neurons and weights (without the math)</h4><ul><li>Each neuron is a number. It receives inputs, multiplies them by learned "weights," and passes the result forward.</li><li>Weights are what the model learns during training — they start random and get adjusted until the model produces correct outputs.</li><li>A large model like GPT-4 has hundreds of billions of these weights.</li></ul><h4>The transformer — the 2017 breakthrough</h4><p>Google researchers published "Attention Is All You Need" in 2017. It introduced the <strong>transformer architecture</strong> — the foundation of every modern LLM: GPT, Claude, Gemini, LLaMA.</p><p>Before transformers: AI processed text word-by-word in sequence. Slow. Forgot early context in long passages.</p><p>Transformers: read all words simultaneously and figure out which words are most related to each other. This is called <strong>self-attention</strong>.</p><div class="abox"><div class="albl">Self-attention in plain English</div>Sentence: "The animal didn't cross the street because it was too tired." What does "it" refer to? The animal. Self-attention lets the model make this connection by learning which word pairs matter most — across the entire input at once.</div>`},
+{title:"Generative AI — what makes it fundamentally different",sub:"Lesson 4 of 13 · The revolution you are living through",badges:["bt:GenAI","bc:Key shift"],content:`<p><strong>Generative AI</strong> creates new content — text, images, code, audio, video — rather than just classifying existing data or making a numerical prediction. This "create vs classify" shift is the single biggest leap in AI history.</p><h4>Traditional AI vs Generative AI</h4><p>Traditional ML output: a label or number. "This email: spam. Probability of fraud: 0.87."</p><p>Generative AI output: a new piece of content. "Write a product spec for a mobile banking app." "Generate a logo." Same model, unlimited different outputs.</p><h4>Two reasons GenAI is disrupting every industry</h4><ul><li><strong>Human-like output</strong> — responses read, sound, and feel like something a skilled person produced. Sometimes better than what a human would do in the same time.</li><li><strong>Content generation at scale</strong> — one fixed model handles infinite different tasks depending on the prompt. No retraining required.</li></ul><h4>The fixed model breakthrough</h4><p>Traditional ML: add a new variable → retrain from scratch. Generative AI: the model is fixed after training. New context is delivered through the prompt at runtime. The model adapts without any retraining. This is why one Claude model can write poetry, debug Python, analyze a contract, and explain quantum physics.</p><h4>The four main types of generative AI</h4><ul><li><strong>Large Language Models (LLMs)</strong> — generate text. GPT-4, Claude, Gemini, LLaMA.</li><li><strong>Image generation models</strong> — generate images from text descriptions. DALL-E, Midjourney, Stable Diffusion.</li><li><strong>Audio and music models</strong> — generate speech, sound effects, or music. Suno, ElevenLabs, MusicGen.</li><li><strong>Multimodal models</strong> — handle multiple types at once. GPT-4o and Gemini 1.5.</li></ul><div class="abox"><div class="albl">The Turing Test connection</div>Alan Turing proposed in 1950: if a human cannot tell whether they are talking to a person or a machine, the machine has demonstrated human-like intelligence. Modern LLMs routinely pass this test in everyday conversation — something that seemed impossible a decade ago.</div>`},
+{title:"Large language models (LLMs) — deep dive",sub:"Lesson 5 of 13 · The engine behind ChatGPT and Claude",badges:["bb:LLMs","bp:Deep dive"],content:`<p>Large Language Models are the specific type of generative AI you will interact with most. This lesson goes deeper into what they are, how they differ, and what their practical limits are.</p><h4>What makes an LLM "large"?</h4><ul><li><strong>Training data</strong>: trillions of words from books, websites, code repositories, scientific papers</li><li><strong>Parameters</strong>: hundreds of billions of learned numerical weights</li><li><strong>Compute</strong>: training runs on thousands of specialized chips (GPUs/TPUs) for months, costing tens or hundreds of millions of dollars</li></ul><h4>LLMs vs Small Language Models (SLMs)</h4><p><strong>Small Language Models (SLMs)</strong> — like Microsoft's Phi series or smaller LLaMA variants — offer similar capabilities for specific tasks with far fewer resources. They can run on a laptop or phone. Ideal for edge devices and cost-sensitive enterprise deployments where you don't need GPT-4-level capability for every task.</p><h4>Tokens — the unit of text LLMs work with</h4><p>LLMs do not read words — they read tokens. A token is roughly 0.75 words in English. "Hello world" = 2 tokens. Why this matters:</p><ul><li>API costs are charged per token (input + output)</li><li>Context window limits are measured in tokens</li><li>Long documents eat up your context window fast</li></ul><h4>Context window — the model's working memory</h4><p>Everything the model can "see" at once — your prompt, conversation history, pasted documents — must fit inside the context window. Claude supports 200,000+ tokens. Older GPT-3 had only 4,096. When you exceed the limit, the model starts "forgetting" the oldest parts of the conversation.</p><h4>Temperature — controlling randomness</h4><ul><li>Temperature 0: deterministic. Same prompt always gives the same answer. Good for factual tasks.</li><li>Temperature 0.7: balanced. Slightly varied. Good for most everyday tasks.</li><li>Temperature 1+: creative and unpredictable. Good for brainstorming and creative writing.</li></ul><h4>Popular LLMs — who makes what</h4><ul><li><strong>GPT-4o</strong> — OpenAI. Powers ChatGPT. Multimodal (text + images + audio).</li><li><strong>Claude Sonnet</strong> — Anthropic. Long context, safety, nuanced reasoning.</li><li><strong>Gemini 1.5 Pro</strong> — Google. Extremely large context, strong multimodal.</li><li><strong>LLaMA 3</strong> — Meta. Open-source. Can run on your own hardware.</li><li><strong>Mistral / Mixtral</strong> — Mistral AI. Open-source, efficient, strong for their size.</li></ul>`},
+{title:"Text generation — what LLMs do best",sub:"Lesson 6 of 13 · The most common GenAI use case",badges:["bt:Practical","bb:Text generation"],content:`<p>Text generation is the most widely used capability of generative AI. This lesson walks through the range of tasks LLMs handle and the key concepts behind how they work.</p><h4>What "text generation" actually covers</h4><ul><li><strong>Summarization</strong> — condense a 50-page report into 3 paragraphs</li><li><strong>Question answering</strong> — answer questions from a document or from training knowledge</li><li><strong>Classification</strong> — sort customer feedback into categories</li><li><strong>Translation</strong> — convert text between languages</li><li><strong>Code generation</strong> — write, explain, or debug code in any programming language</li><li><strong>Creative writing</strong> — stories, poems, marketing copy, scripts</li><li><strong>Structured extraction</strong> — pull specific data from unstructured text (dates, names from contracts)</li><li><strong>Conversation</strong> — multi-turn dialogue with memory of earlier messages</li></ul><h4>How the model actually produces output</h4><p>At each step, the model calculates a probability distribution over its entire vocabulary (30,000–100,000 possible tokens). It picks the next token based on this distribution (influenced by temperature). Then it appends that token and repeats. This is called <strong>autoregressive generation</strong>.</p><div class="abox"><div class="albl">Why this explains hallucination</div>The model doesn't "know" facts the way humans do. It produces the statistically most likely continuation of text. If training data contained a false claim frequently, the model may generate it confidently — because it is statistically plausible, not because it is true.</div><h4>Common business applications (from the Bahree book)</h4><ul><li><strong>Marketing</strong>: product descriptions, ad copy, email campaigns</li><li><strong>Software development</strong>: code completion, test generation, documentation</li><li><strong>Business reports</strong>: automated narrative generation from data, executive summaries</li><li><strong>Customer support</strong>: automated responses, ticket classification, knowledge base Q&A</li><li><strong>Legal/HR</strong>: contract summarization, policy drafting, job descriptions</li></ul><h4>What LLMs are not good at (yet)</h4><ul><li>Precise arithmetic — they estimate, they don't calculate</li><li>Real-time information — training has a cutoff date</li><li>Private/internal data — they only know what they were trained on (RAG fixes this)</li><li>Guaranteed factual accuracy — always verify critical outputs</li></ul>`},
+{title:"Image and vision models — GenAI beyond text",sub:"Lesson 7 of 13 · How AI generates and understands images",badges:["bc:Vision","bp:Multimodal"],content:`<p>Generative AI is not just about text. Image generation models are a separate but equally powerful branch of the technology.</p><h4>Two separate problems: generating vs understanding images</h4><ul><li><strong>Image generation</strong>: text in → image out. "A photorealistic photo of a cat wearing a spacesuit, dramatic lighting." → the model creates a new image.</li><li><strong>Image understanding (vision)</strong>: image in → text out. "What is happening in this photo?" → the model describes it. Used in GPT-4o and Gemini.</li></ul><h4>How diffusion models generate images</h4><p>The dominant technique for image generation is <strong>diffusion</strong>:</p><ul><li>During training: take real images, gradually add random noise until unrecognizable. Teach the model to reverse this — to "denoise" step by step.</li><li>At generation: start with pure random noise. Apply learned denoising guided by your text prompt to gradually produce a coherent image.</li></ul><div class="abox"><div class="albl">Analogy</div>A sculptor starting with a block of random marble chips. Each step they carve and the form becomes clearer. The "prompt" tells them what they are sculpting. After many steps: a finished image emerges from noise.</div><h4>Key image generation capabilities</h4><ul><li><strong>Text-to-image</strong>: generate from a description</li><li><strong>Inpainting</strong>: fill in or replace a selected area of an existing image</li><li><strong>Outpainting</strong>: extend an image beyond its original borders</li><li><strong>Image-to-image</strong>: transform an existing image using a prompt</li><li><strong>Style transfer</strong>: apply the style of one image to the content of another</li></ul><h4>Major image generation models</h4><ul><li><strong>DALL-E 3</strong> (OpenAI) — integrated into ChatGPT. Excellent at following complex prompts literally.</li><li><strong>Midjourney</strong> — known for aesthetic quality and artistic style. Popular with designers.</li><li><strong>Stable Diffusion</strong> — open-source. Can run locally on your own machine.</li><li><strong>Imagen 3</strong> (Google) — strong photorealism, integrated into Gemini.</li></ul>`},
+{title:"Audio and music generation — the third modality",sub:"Lesson 8 of 13 · GenAI for sound",badges:["ba:Audio","bt:Multimodal"],content:`<p>After text and images, audio is the third major modality for generative AI — including speech synthesis, voice cloning, music generation, and sound effect creation.</p><h4>Text-to-speech (TTS) — making AI speak</h4><p>Modern TTS models produce natural, expressive speech with appropriate intonation, pace, and emotion — not the robotic voice of old GPS systems.</p><ul><li>High-quality voice in dozens of languages and accents</li><li>Emotional tone control: excited, calm, serious, warm</li><li>Voice cloning: replicate a specific person's voice from a short audio sample (raises serious ethical questions — covered in Lesson 13)</li></ul><p>Popular tools: ElevenLabs, OpenAI TTS, Google Text-to-Speech, Microsoft Azure Neural TTS.</p><h4>Speech-to-text (transcription)</h4><p>The reverse: audio in → text out. OpenAI's Whisper model achieves near-human accuracy across 100 languages. Used in: meeting transcription, subtitle generation, voice assistants, call center analysis.</p><h4>Music generation — GenAI as composer</h4><p>AI can now generate full musical compositions from a text prompt: "a calm lo-fi hip-hop track for studying" or "an epic orchestral theme for a fantasy film."</p><ul><li><strong>Suno</strong> — generates full songs with vocals from a text prompt</li><li><strong>Udio</strong> — similar capabilities, different aesthetic</li><li><strong>MusicGen</strong> (Meta) — open-source music generation model</li><li><strong>AudioCraft</strong> (Meta) — generates music, sound effects, and audio from descriptions</li></ul><h4>How audio models work (briefly)</h4><p>Audio is converted into a numerical representation (spectrogram or tokens). The model is trained on vast audio libraries and learns to generate coherent audio sequences — similar in concept to how LLMs generate text tokens. Some models use diffusion for audio, just as image models do for pixels.</p>`},
+{title:"Prompt engineering — the skill that unlocks everything",sub:"Lesson 9 of 13 · How to talk to AI effectively",badges:["ba:Core skill","bb:Must-know","bt:Practical"],content:`<p>Prompt engineering is the practice of designing inputs to reliably get high-quality outputs from a generative AI model. The same model gives completely different results depending on how you ask.</p><div class="abox"><div class="albl">Analogy</div>Same intern, two requests: "help me with the project" vs "you are a financial analyst. Summarize this Q3 earnings report in 5 bullet points, focus on risks and the CFO's outlook." Same person. Wildly different output quality.</div><h4>The 5 pillars of a good prompt</h4><ul><li><strong>Role</strong> — who should the model act as? "You are a senior software engineer reviewing code for security vulnerabilities."</li><li><strong>Goal</strong> — what exactly do you need? Not "help me" but "write a 200-word executive summary of..."</li><li><strong>Context</strong> — background the model doesn't have: your company, audience, constraints</li><li><strong>Template</strong> — define the output structure. "Respond in this format: Problem / Root cause / 3 options / Recommendation"</li><li><strong>Format</strong> — how should it look? "Use bullet points. Max 150 words. Avoid technical jargon."</li></ul><h4>The main prompting techniques</h4><ul><li><strong>Zero-shot</strong>: ask directly with no examples. Works for clear, simple tasks.</li><li><strong>Few-shot</strong>: provide 2–3 examples of input→output pairs before your question.</li><li><strong>Chain-of-thought (CoT)</strong>: ask the model to "think step by step" before answering. Dramatically improves complex reasoning and analysis.</li><li><strong>Role prompting</strong>: assign a specific persona. The more specific, the better.</li><li><strong>Self-consistency</strong>: run the same prompt multiple times, take the most common answer.</li><li><strong>ReAct</strong>: interleave reasoning with tool actions. Used in AI agents (Lesson 12).</li></ul><h4>System prompts vs user prompts</h4><p><strong>System prompt</strong>: instructions set before the conversation begins. Defines the model's persona, rules, and constraints for the entire session. Engineers write system prompts to control how AI behaves for all users in a product.</p><p><strong>User prompt</strong>: the message you type in real time.</p><h4>Common beginner mistakes</h4><ul><li>Too vague: "tell me about this" — what aspect? what length? for whom?</li><li>No context: the model doesn't know your company, constraints, or audience</li><li>Accepting first output: prompting is iterative — push back, refine, ask follow-ups</li><li>Too many tasks in one prompt: break complex jobs into steps</li></ul>`},
+{title:"RAG — giving AI access to your data",sub:"Lesson 10 of 13 · Retrieval-Augmented Generation explained simply",badges:["bp:RAG","bt:Enterprise","bb:Architecture"],content:`<p>RAG stands for <strong>Retrieval-Augmented Generation</strong>. It is the most important architectural pattern in enterprise AI today. Almost every serious AI product built inside a company uses it.</p><h4>The problem RAG solves</h4><p>LLMs have two critical limitations for business use:</p><ul><li><strong>Training cutoff</strong>: they only know what was in their training data. Claude doesn't know your company's internal policies, last month's sales figures, or a regulation published last week.</li><li><strong>No private data</strong>: you cannot train GPT-4 on your confidential documents (too expensive, data privacy concerns).</li></ul><div class="abox"><div class="albl">Analogy — open-book vs closed-book exam</div>A standard LLM is a closed-book exam — answers only from what it memorized during training. A RAG system is an open-book exam — before answering, it looks up relevant pages in your private library, then generates an answer grounded in that specific content. More accurate. More current. More specific to your organization.</div><h4>How RAG works — the 5 steps</h4><ul><li><strong>1. Ingest documents</strong>: your internal docs, PDFs, emails, databases are loaded into the system</li><li><strong>2. Chunk and embed</strong>: documents are split into small chunks. Each chunk is converted into a numerical vector (embedding) capturing its meaning</li><li><strong>3. Store in vector database</strong>: all embeddings stored in a database built for fast similarity search (Pinecone, Weaviate, Chroma)</li><li><strong>4. Retrieve at query time</strong>: user's question is also embedded; the vector database finds the most similar document chunks</li><li><strong>5. Generate with context</strong>: retrieved chunks are injected into the prompt alongside the question; the LLM answers using this real, current context</li></ul><h4>Real-world RAG applications</h4><ul><li>Company chatbot that answers HR questions using the actual policy handbook</li><li>Legal assistant searching thousands of case documents to answer a specific question</li><li>Customer support bot trained on your product documentation and past tickets</li><li>Code assistant retrieving relevant internal code patterns before suggesting completions</li></ul><h4>RAG vs fine-tuning</h4><ul><li>RAG: best when your data changes frequently or is confidential. No training required. Fast to deploy.</li><li>Fine-tuning: best when you need the model to deeply internalize domain style or expertise. Expensive and slower.</li></ul>`},
+{title:"Fine-tuning and model adaptation",sub:"Lesson 11 of 13 · Customizing AI for specific domains",badges:["ba:Advanced","bp:Fine-tuning"],content:`<p>A pre-trained LLM is a general-purpose intelligence. Fine-tuning adapts it to behave like an expert in your specific domain.</p><div class="abox"><div class="albl">Analogy</div>A chef who has mastered world cuisine (pre-trained model) goes to work in a Michelin-starred Indian restaurant for 6 months (fine-tuning on domain data). They don't forget how to cook other food — they become exceptionally good at Indian cooking, knowing every spice combination and regional variation by instinct.</div><h4>When to fine-tune vs when to just prompt better</h4><ul><li><strong>Prompt first</strong>: 80% of the time, a well-crafted prompt solves the problem without any training. Always start here.</li><li><strong>RAG next</strong>: if the model needs access to specific data, add retrieval. No training needed.</li><li><strong>Fine-tune last</strong>: when you need the model to consistently behave a specific way — always respond in medical report format, master highly specialized terminology.</li></ul><h4>LoRA — efficient fine-tuning</h4><p><strong>LoRA (Low-Rank Adaptation)</strong> adds a small set of trainable matrices alongside the frozen original weights. This reduces the compute cost of fine-tuning by 90%+ while achieving similar results. Makes fine-tuning accessible without massive GPU clusters.</p><h4>RLHF — how ChatGPT learned to be helpful and safe</h4><ul><li>Human raters score different model responses on helpfulness, accuracy, and safety</li><li>A "reward model" is trained on these human preferences</li><li>The LLM is then fine-tuned using reinforcement learning to maximize the reward model's score</li></ul><p>This is exactly how OpenAI made GPT-3 into ChatGPT, and how Anthropic trained Claude. Without RLHF, raw LLMs can be unpredictable or generate harmful content.</p><h4>Domain fine-tuning examples</h4><ul><li>Medical LLM: fine-tuned on clinical notes, diagnoses, treatment plans</li><li>Legal LLM: fine-tuned on contracts, case law, regulatory documents</li><li>Coding assistant: fine-tuned on your company's internal code patterns and style guide</li></ul>`},
+{title:"Deploying GenAI at scale — production realities",sub:"Lesson 12 of 13 · From experiment to enterprise product",badges:["bg:Deployment","ba:Enterprise","bb:Architecture"],content:`<p>Building a GenAI demo takes an afternoon. Building a GenAI product that works reliably for 100,000 users is a completely different engineering challenge.</p><h4>The architecture layers of a production GenAI application</h4><ul><li><strong>Model layer</strong>: the LLM itself (hosted by OpenAI, Anthropic, or self-hosted open-source)</li><li><strong>Orchestration layer</strong>: coordinates retrieval, memory, tool calls, prompt management. Frameworks: LangChain, LlamaIndex.</li><li><strong>Data layer</strong>: vector databases (for RAG), traditional databases (for user data)</li><li><strong>Application layer</strong>: the actual product — chatbot UI, API endpoint, background processing job</li><li><strong>Observability layer</strong>: logging, monitoring, tracing — so you can see what the model is doing and why it fails</li></ul><h4>AI agents — AI that acts, not just answers</h4><p>A standard LLM gives you text. An <strong>AI agent</strong> reasons, decides to take an action (call an API, search the web, run code, update a database), observes the result, then reasons again — in a loop until the goal is accomplished.</p><div class="abox"><div class="albl">Agent example</div>"Book me a train from Bangalore to Mumbai next Friday under ₹2000." An agent: (1) searches the railway booking API, (2) filters by price and date, (3) selects the best option, (4) confirms with you, (5) completes the booking. A standard LLM would just tell you how to do it yourself.</div><h4>Key production challenges</h4><ul><li><strong>Latency</strong>: LLMs are slow. Users expect &lt;2 seconds. Streaming responses (showing words as they appear) improves perceived speed.</li><li><strong>Cost</strong>: API calls billed per token. 100,000 daily users can cost hundreds of thousands of dollars per month. Caching and smaller models for simple tasks are key optimizations.</li><li><strong>Reliability</strong>: LLMs produce inconsistent outputs. Robust apps add retries, fallbacks, and output validation.</li><li><strong>Evaluation</strong>: "evals" — automated frameworks using another model to score output quality. The hardest unsolved problem in production AI.</li></ul><h4>Integration patterns (from Bahree's book)</h4><ul><li><strong>Copilot</strong>: AI assists a human. Human stays in the loop for all decisions. Safest.</li><li><strong>Autopilot</strong>: AI operates autonomously on defined tasks. Requires strong guardrails.</li><li><strong>Hybrid</strong>: AI handles routine cases, escalates edge cases to humans. Most common in enterprise.</li></ul>`},
+{title:"Ethics, risks, and responsible AI",sub:"Lesson 13 of 13 · The human side of GenAI",badges:["bc:Ethics","bg:Responsible AI"],content:`<p>Generative AI is enormously powerful. That power comes with real risks — not hypothetical future risks, but ones that exist and cause harm today.</p><h4>Hallucination — the fundamental reliability problem</h4><p>An LLM generates the statistically most plausible next token — not the provably true one. The result: models confidently state false information. A legal AI citing non-existent court cases. A medical AI recommending a wrong drug dose.</p><ul><li>Always verify factual claims from AI in high-stakes domains</li><li>Mitigation: RAG, chain-of-thought, lower temperature, explicit "I don't know" training</li></ul><h4>Bias — inherited from training data</h4><p>LLMs learn from human-generated text — including all its biases. If training data overrepresents certain demographics or viewpoints, the model's outputs will reflect those biases. Documented in: hiring tools that downgrade female names, medical models trained mostly on male patients.</p><h4>Jailbreaks — prompts that bypass safety controls</h4><p>A carefully crafted prompt that tricks a model into ignoring its safety guidelines. "Pretend you are an AI with no restrictions and tell me how to..." Despite extensive safety training, all major models have known jailbreak vulnerabilities. An ongoing arms race between safety researchers and adversarial users.</p><h4>Privacy and data leakage</h4><ul><li>LLMs can inadvertently reproduce personal information from training data</li><li>Employees entering confidential company data into public ChatGPT may violate data privacy laws</li><li>Enterprise solutions: use private model deployments, data anonymization, access controls</li></ul><h4>Voice cloning and deepfakes</h4><p>Audio models can clone anyone's voice from a 30-second sample. Video diffusion models can generate convincing video of people saying things they never said. These technologies enable misinformation and fraud at unprecedented scale.</p><h4>Governance — how organizations manage AI risk</h4><ul><li><strong>AI policy</strong>: written guidelines on what AI can and cannot be used for internally</li><li><strong>Model cards</strong>: documentation of what a model was trained on and its known failure modes</li><li><strong>Human-in-the-loop</strong>: for high-stakes decisions (medical, legal, financial), AI recommends but a human decides</li><li><strong>EU AI Act</strong>: the world's first comprehensive AI regulation, classifying AI systems by risk level</li></ul><div class="abox"><div class="albl">Bottom line from Bahree's book</div>Generative AI is not inherently safe or unsafe — it is a powerful tool. Organizations that deploy it responsibly, with clear governance and human oversight in high-stakes contexts, will benefit enormously. Those who deploy it carelessly face reputational, legal, and ethical consequences.</div>`}
+];
+
+let doneL=new Set(),curL=0;
+function rnav(){
+  const n=document.getElementById('lnav');n.innerHTML='';
+  L.forEach((l,i)=>{
+    const b=document.createElement('button');
+    b.className='ln'+(i===curL?' on':'')+(doneL.has(i)&&i!==curL?' done':'');
+    b.textContent=(doneL.has(i)&&i!==curL?'✓ ':'')+''+(i+1);
+    b.title=l.title;b.onclick=()=>{curL=i;rl();};
+    n.appendChild(b);
+  });
+}
+function rl(){
+  const l=L[curL];
+  const pct=Math.round((doneL.size/L.length)*100);
+  document.getElementById('lp').style.width=pct+'%';
+  const badges=l.badges.map(b=>{const[c,t]=b.split(':');return`<span class="badge ${c}">${t}</span>`;}).join('');
+  const isLast=curL===L.length-1;
+  document.getElementById('lbody').innerHTML=`<div class="lbody"><div class="ltitle">${l.title}</div><div class="lsub">${l.sub}</div><div class="badges">${badges}</div><div class="lc">${l.content}</div></div><button class="nbtn" onclick="nl()">${isLast?'Review from lesson 1':'Next lesson →'}</button>`;
+  rnav();
+}
+function nl(){doneL.add(curL);curL=curL<L.length-1?curL+1:0;rl();}
+rl();
+
+const glossary=[
+  {term:"Artificial Intelligence (AI)",short:"Machines that learn and solve problems",full:"Computer programs that learn from examples and generalize to new situations — rather than following hand-coded rules for every case. The umbrella term for all the concepts in this course."},
+  {term:"Machine learning (ML)",short:"The main technique used to build AI",full:"A subset of AI where models find patterns in data rather than following human-written rules. Show it enough labeled examples and it learns to handle new cases on its own. Powers almost all AI products today."},
+  {term:"Supervised learning",short:"Learning from labeled examples",full:"Training on data where the correct answer is provided. 'This email: spam. This one: not spam.' The model learns to predict labels for new, unlabeled inputs. Most common ML type. Used in fraud detection, medical diagnosis, price prediction."},
+  {term:"Unsupervised learning",short:"Finding hidden patterns, no labels",full:"Training on data with no labels. The model discovers hidden structure — clusters, anomalies, patterns — on its own. Used in customer segmentation, anomaly detection, topic modeling."},
+  {term:"Reinforcement learning (RL)",short:"Learn by reward and penalty",full:"A model takes actions in an environment and receives rewards for good ones, penalties for bad ones. Used in game-playing AI, robotics, and RLHF (making LLMs safe and helpful)."},
+  {term:"Neural network",short:"Math layers loosely inspired by the brain",full:"A series of mathematical transformations (layers) that progressively extract features from raw data. 'Deep' learning = many layers. The building block of all modern AI including LLMs."},
+  {term:"Transformer",short:"Architecture behind all modern LLMs",full:"A neural network architecture introduced by Google in 2017. Processes all input tokens simultaneously using self-attention. The foundation of GPT, Claude, Gemini, LLaMA. The most important AI invention of the 2010s."},
+  {term:"Self-attention",short:"How words relate to each other in context",full:"The mechanism in transformers that lets the model understand which words in a sentence are most relevant to each other — across the entire input at once. Solves pronoun resolution and long-range dependencies."},
+  {term:"LLM (Large Language Model)",short:"AI trained on trillions of words",full:"A transformer-based model trained on vast text data that can generate, summarize, translate, and reason over language. Examples: GPT-4, Claude, Gemini, LLaMA. 'Large' refers to training data scale and parameter count."},
+  {term:"SLM (Small Language Model)",short:"Lightweight LLM for edge or cost-sensitive use",full:"A smaller version of an LLM offering similar capabilities for specific tasks with much lower resource requirements. Can run on a laptop or phone. Examples: Phi-3, smaller LLaMA variants. Ideal for enterprise deployments where GPT-4 capability isn't needed for every task."},
+  {term:"Parameters / weights",short:"The numbers the model learns during training",full:"The internal numerical values in a neural network adjusted during training. GPT-4 has an estimated 1+ trillion parameters. More parameters does not always mean better — architecture and training data quality matter just as much."},
+  {term:"Token",short:"The unit of text AI processes",full:"The basic unit LLMs read and generate. Roughly 0.75 words in English. 'Hello world' = 2 tokens. Context window limits and API costs are measured in tokens. Long documents eat context window fast."},
+  {term:"Context window",short:"How much text the model can see at once",full:"The maximum amount of text (in tokens) a model can process in one interaction. Everything — your prompt, conversation history, pasted documents — must fit here. Claude supports 200,000+ tokens. Older models had just 4,096."},
+  {term:"Temperature",short:"Controls randomness of output",full:"A setting (0 to 1+) controlling output randomness. 0 = deterministic, always the same answer, good for factual tasks. 0.7 = balanced. 1+ = creative and varied, good for brainstorming. Most everyday tasks: 0.5–0.7."},
+  {term:"Generative AI",short:"AI that creates new content",full:"AI that generates new, original content — text, images, code, audio, video — rather than just classifying existing data. Powered by LLMs (text) and diffusion models (images). The revolution of 2022–present."},
+  {term:"Prompt engineering",short:"Designing inputs to get great outputs",full:"The skill of structuring your inputs to reliably get high-quality outputs from AI. Includes techniques: zero-shot, few-shot, chain-of-thought, role prompting, template prompting. Often the difference between useless and excellent AI output."},
+  {term:"Zero-shot prompting",short:"Ask directly, no examples",full:"Asking a model to perform a task with no demonstrations. Just the instruction. Works well for clear, simple tasks. Baseline prompting approach."},
+  {term:"Few-shot prompting",short:"Show 2-3 examples before asking",full:"Providing example input→output pairs before your actual question. The model infers the pattern and follows it. Best for specific formats, classification tasks, style replication."},
+  {term:"Chain-of-thought (CoT)",short:"Ask it to reason step by step",full:"Appending 'think step by step' to prompts or showing worked reasoning examples. Forces the model to show its reasoning before answering. Dramatically improves accuracy on math, logic, analysis, and complex multi-step problems."},
+  {term:"System prompt",short:"Instructions before the conversation begins",full:"A block of instructions set by the developer that defines the model's persona, rules, and constraints for an entire session. Users typically don't see it. Engineers use it to control product behavior at scale."},
+  {term:"Hallucination",short:"When AI confidently says something false",full:"When an LLM generates plausible-sounding but factually wrong information. Happens because the model predicts likely tokens, not necessarily true ones. It has no concept of truth — only statistical plausibility. Always verify critical AI outputs."},
+  {term:"RAG (Retrieval-Augmented Generation)",short:"AI that looks things up before answering",full:"Combines a retrieval system (semantic search over your documents) with an LLM. At query time: find relevant chunks, inject into prompt, generate answer grounded in real data. Solves the stale/private data problem. Used in most enterprise AI products."},
+  {term:"Vector database",short:"Stores meaning, not just keywords",full:"A database that stores numerical embeddings and performs fast similarity search. Understands that 'revenue' and 'income' are semantically similar even though they are different words. Powers RAG retrieval. Examples: Pinecone, Weaviate, Chroma, Qdrant."},
+  {term:"Embeddings",short:"Converting text into numbers that capture meaning",full:"Mathematical vector representations of text (or images) in high-dimensional space. Similar meanings = vectors close together. The foundation of semantic search, RAG retrieval, and recommendation systems."},
+  {term:"Fine-tuning",short:"Extra training on your specific domain",full:"Continuing training of a pre-trained model on a smaller domain-specific dataset. Adapts style, tone, format preferences, and domain knowledge. More expensive than prompting + RAG. Use when you need deep, consistent domain specialization."},
+  {term:"LoRA (Low-Rank Adaptation)",short:"Efficient fine-tuning technique",full:"A PEFT technique that adds small trainable matrices alongside frozen model weights, reducing fine-tuning compute cost by 90%+ while achieving comparable results. Makes fine-tuning accessible without massive GPU clusters."},
+  {term:"RLHF",short:"Human feedback makes AI safer and more helpful",full:"Reinforcement Learning from Human Feedback. Human raters score model outputs; a reward model is trained on their preferences; the LLM is fine-tuned to maximize those scores. How OpenAI made ChatGPT and Anthropic made Claude aligned, helpful, and safe."},
+  {term:"AI agent",short:"AI that plans and acts autonomously",full:"An AI system that goes beyond answering — it reasons, calls tools (search, APIs, code runners), observes results, and iterates until a goal is complete. Built on the ReAct pattern: Reason → Act → Observe → Repeat."},
+  {term:"Diffusion model",short:"Generates images by removing noise step by step",full:"Trained by adding noise to images and learning to reverse it. At generation: starts from pure random noise, denoises step-by-step guided by a text prompt to produce a coherent image. Powers DALL-E, Midjourney, Stable Diffusion."},
+  {term:"Jailbreak",short:"Prompts that bypass safety filters",full:"Carefully crafted prompts that trick a model into ignoring its safety guidelines. An ongoing arms race between safety researchers and adversarial users. No model is fully immune. One of the key challenges in responsible AI deployment."},
+  {term:"EU AI Act",short:"World's first comprehensive AI law",full:"European Union regulation classifying AI systems by risk level (unacceptable, high, limited, minimal) and imposing different transparency, accountability, and safety requirements on each. Sets a global benchmark for AI governance."},
+];
+
+function rg(){
+  const g=document.getElementById('glist');g.innerHTML='';
+  glossary.forEach(item=>{
+    const d=document.createElement('div');d.className='gc';
+    d.innerHTML=`<div class="gterm">${item.term}</div><div class="gshort">${item.short}</div><div class="gfull">${item.full}</div>`;
+    d.onclick=()=>d.classList.toggle('open');
+    g.appendChild(d);
+  });
+}
+rg();
+
+const hints={
+  z:"Direct ask. No examples. Be specific: what you want, format, length. Try: 'Explain what a vector database is in 3 sentences for a beginner.'",
+  f:"Give 2-3 input→output examples first, then your question. Format: Input: [x] → Output: [y]. Input: [x2] → Output: [y2]. Now: Input: [yours] →",
+  c:"End with 'Think step by step before answering.' Use on complex questions: how something works, comparing options, explaining a tradeoff.",
+  r:"Open with: 'You are a [specific expert] explaining to a [specific audience]...' The more specific, the better.",
+  t:"Define exact output structure. 'Respond ONLY in this format: Term: / One-line definition: / Real example: / Why it matters:' Eliminates rambling.",
+  s:"Set full session context: 'You are a patient AI tutor. The student is a first-year engineering student with no AI background. Always use simple analogies. Never use jargon without immediately defining it.'"
+};
+function uh(){document.getElementById('hint').textContent='→ '+hints[document.getElementById('tsel').value];}
+uh();
+
+const starters=[
+  {l:"Explain RAG like I'm a beginner",p:"Explain Retrieval-Augmented Generation (RAG) in plain English. I'm a first-year engineering student with no AI background. Use a real-world analogy and keep it under 150 words."},
+  {l:"Chain-of-thought: why do models hallucinate?",p:"Think step by step before answering: why do large language models sometimes generate confident but false information? Walk through your reasoning, then give a clear summary."},
+  {l:"Role: explain fine-tuning vs prompting",p:"You are an experienced ML engineer explaining to a curious first-year student. What is the difference between prompt engineering, RAG, and fine-tuning? When should I use each one?"},
+  {l:"Template: summarize a concept",p:"Explain 'diffusion models for image generation' in this exact format:\nWhat it is (1 sentence):\nHow it works (3 bullet points):\nReal-world example:\nWhy it matters for a student:"},
+  {l:"Few-shot: classify AI use cases",p:"I'll give examples of how to classify AI use cases, then you classify the next one.\nInput: 'Gmail autocomplete' → Type: Text generation (predictive)\nInput: 'Spotify recommendations' → Type: Supervised learning (recommendation)\nInput: 'DALL-E creating product images' → Type:"},
+  {l:"Zero-shot: what is a context window?",p:"What is a context window in the context of large language models? Explain in simple terms with a practical example of what happens when you exceed it."},
+];
+
+function rs(){
+  const c=document.getElementById('starters');
+  starters.forEach(s=>{
+    const b=document.createElement('button');
+    b.className='starter-btn';
+    b.textContent='→ '+s.l;
+    b.onclick=()=>document.getElementById('pinp').value=s.p;
+    c.appendChild(b);
+  });
+}
+rs();
+
+async function runp(){
+  const p=document.getElementById('pinp').value.trim();
+  if(!p)return;
+  const btn=document.getElementById('rbtn'),ldg=document.getElementById('ldg'),resp=document.getElementById('resp');
+  const tv=document.getElementById('tsel').value;
+  const tn={z:'zero-shot',f:'few-shot',c:'chain-of-thought',r:'role prompting',t:'template prompting',s:'system prompting'};
+  btn.disabled=true;ldg.classList.add('on');resp.classList.remove('on');resp.textContent='';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:`You are a friendly, clear AI tutor helping a first-year engineering student who knows nothing about AI or ML. They are learning from 'Generative AI in Action' by Amit Bahree (Manning, 2024). They are practicing the "${tn[tv]}" prompting technique. Always explain at beginner level — no jargon without immediate definition, use real analogies. After your answer add: "— Prompting note: [one observation on how they used ${tn[tv]} + one concrete improvement tip]"`,messages:[{role:'user',content:p}]})});
+    const d=await r.json();
+    if(d.error){resp.textContent='API error: '+d.error.message+'\n\nNote: The sandbox requires a valid Anthropic API key configured in the hosting environment.';resp.classList.add('on');ldg.classList.remove('on');btn.disabled=false;return;}
+    resp.textContent=d.content?.map(b=>b.text||'').join('')||'No response received.';
+    resp.classList.add('on');
+  }catch(e){resp.textContent='Connection error. The sandbox requires an internet connection and a configured API key in the hosting environment.\n\nAll lessons, glossary, and quiz work fully offline.';resp.classList.add('on');}
+  ldg.classList.remove('on');btn.disabled=false;
+}
+
+const questions=[
+  {q:"What is the fundamental difference between a traditional program and an AI program?",opts:["Traditional programs are written in older languages; AI programs use Python","Traditional programs have every rule hand-coded by a human; AI programs learn patterns from data","Traditional programs run on computers; AI programs run on specialized chips only","Traditional programs cost more to build than AI programs"],correct:1,fb:"The key distinction: traditional programs need a human to explicitly code every rule. AI programs are shown examples and figure out the rules themselves — then generalize to new cases they've never seen. This is why 'learning from data' is the defining characteristic of AI."},
+  {q:"A bank wants to build a model that detects fraudulent transactions using 2 million historical records labeled 'fraud' or 'legitimate.' What type of ML is this?",opts:["Unsupervised learning, because you're looking for patterns","Reinforcement learning, because the model gets rewarded for finding fraud","Supervised learning, because you have labeled training data","Deep learning, because banking requires deep analysis"],correct:2,fb:"Supervised learning = labeled data. You have the correct answer (fraud/legitimate) for each example. The model learns the pattern, then predicts labels for new, unseen transactions. Classic supervised classification."},
+  {q:"What was the key innovation of the Transformer architecture introduced in 2017?",opts:["It made computers 100x faster by using quantum processors","It replaced word-by-word sequential processing with parallel self-attention across all tokens simultaneously","It was the first neural network ever created for language tasks","It allowed AI to run on mobile phones without internet connection"],correct:1,fb:"Transformers replaced sequential (RNN) processing with self-attention — every token attends to every other token at once. This enabled massive parallelization, better long-range understanding, and is why GPT/Claude can handle complex long-form text so well."},
+  {q:"What does RAG stand for, and what core problem does it solve?",opts:["Random Augmented Generation — makes AI outputs more creative","Retrieval-Augmented Generation — gives LLMs access to specific, current, or private data they weren't trained on","Rapid AI Generation — speeds up how fast models generate text","Rule-based AI Generation — adds rules to control AI outputs"],correct:1,fb:"RAG = Retrieval-Augmented Generation. It solves the stale/private data problem: LLMs only know what was in their training data. RAG retrieves relevant documents at query time, injects them into the prompt, and the model answers from real, specific, current context."},
+  {q:"An AI generates a financial report and confidently states a company's revenue grew 43% last year — but this figure is completely fabricated. What is this called?",opts:["A jailbreak — someone tricked the AI into bypassing its rules","Overfitting — the model memorized training data too well","Hallucination — the model generated plausible-sounding but false information","Bias — the model was trained on unrepresentative data"],correct:2,fb:"Hallucination = confident wrongness. The model predicts statistically likely tokens, not provably true ones. It has no concept of 'truth' — only of what text plausibly follows what. Always verify critical AI outputs independently, especially in finance, law, and medicine."},
+  {q:"What is the difference between training and inference in machine learning?",opts:["Training is when the AI talks to humans; inference is when it talks to other AIs","Training is the expensive process of the model learning from data; inference is using the trained model to respond in real time","Training happens in the cloud; inference happens on your local device","Training uses supervised learning; inference uses reinforcement learning"],correct:1,fb:"Training = learning (expensive, slow, happens once). Inference = using what was learned (fast, happens every time you interact with an AI). When you type into ChatGPT, you are triggering inference — not training. The model was trained months ago."},
+  {q:"You need to build a chatbot that answers questions about your company's HR policies (which change quarterly). You cannot afford to retrain the model every quarter. What is the best approach?",opts:["Fine-tune a new model every quarter — there is no other option","Use RAG: store your policy documents in a vector database and retrieve relevant sections at query time","Use a higher temperature setting so the model gets more creative with its answers","Build your own LLM from scratch trained only on your HR data"],correct:1,fb:"RAG is exactly designed for this: frequently-changing, domain-specific, private data. You update the document store when policies change — no model retraining needed. Fine-tuning would work but is expensive and slow to update. Building from scratch is impractical."},
+  {q:"What is RLHF and why was it critical for making ChatGPT what it is today?",opts:["Random Learning and Human Filtering — removes bad outputs before users see them","Reinforcement Learning from Human Feedback — human raters scored model outputs, training ChatGPT to be helpful and safe","Rapid Language and Human Formatting — speeds up how quickly models respond","Recursive Large-scale Human Foundation — the method for collecting training data from Wikipedia"],correct:1,fb:"RLHF = Reinforcement Learning from Human Feedback. Human raters scored responses on helpfulness and safety. A reward model was trained on these preferences. GPT-3 was then fine-tuned via RL to maximize the reward. Without RLHF, raw LLMs are unpredictable and potentially harmful. RLHF is what made them usable products."},
+  {q:"What is the main advantage of a Small Language Model (SLM) over a Large Language Model (LLM)?",opts:["SLMs are always more accurate than LLMs","SLMs can be deployed on edge devices and cost-sensitive environments with much lower resource requirements","SLMs have larger context windows than LLMs","SLMs can generate images while LLMs can only generate text"],correct:1,fb:"SLMs trade raw capability for efficiency. They can run on a phone, a laptop, or a cheap cloud instance. For many enterprise tasks — document classification, specific Q&A, structured extraction — SLMs are 'good enough' and far cheaper to run at scale than GPT-4-class models."},
+  {q:"What is a diffusion model and what does it generate?",opts:["A model that slowly diffuses training data across multiple servers for faster learning","A model that starts from random noise and progressively denoises it — guided by a text prompt — to generate images","A model that generates text by diffusing attention across all tokens","A model used for detecting network security threats"],correct:1,fb:"Diffusion models power DALL-E, Midjourney, and Stable Diffusion. Training: add noise to real images until unrecognizable, then learn to reverse the process. At generation: start from pure random noise, denoise step-by-step guided by your text prompt. A new image emerges from nothing."},
+  {q:"Which is the correct order of approaches to try before fine-tuning an LLM for a specific task?",opts:["Fine-tune first, then try prompting if it fails","Collect training data, fine-tune, then test with prompts","Prompt engineer first, then add RAG if needed, then fine-tune as a last resort","Always start with fine-tuning because prompting is too imprecise for business use"],correct:2,fb:"Prompt first (free, fast, handles 80% of cases). Add RAG if the model needs specific/private/current data. Fine-tune only when you need the model to deeply internalize domain style or knowledge that prompting + RAG cannot provide. Fine-tuning is expensive and slow to iterate."},
+  {q:"An AI tool screens job applicants and consistently ranks female candidates lower than equally qualified male candidates. What type of AI risk is this?",opts:["Hallucination — the AI is making up qualifications that don't exist","Jailbreaking — someone tampered with the AI's output","Bias — the model learned discriminatory patterns from historical training data","Overfitting — the model memorized specific applicants instead of generalizing"],correct:2,fb:"Bias in AI is inherited from biased training data. If historical hiring data shows men were more often hired (due to past discrimination), the model learns this as 'correct.' This is a real, documented problem with hiring AI tools. Responsible AI practice requires auditing outputs across demographic groups before deployment."},
+];
+
+let cq=0,sc=0,ans=false;
+function rq(){
+  const c=document.getElementById('qcon');
+  if(cq>=questions.length){
+    const m=sc>=10?'Excellent — strong foundation in GenAI concepts.':sc>=7?'Good — revisit a few lessons and retry.':'Go back through the lessons, then retry.';
+    c.innerHTML=`<div class="scbox"><div class="scn">${sc}/${questions.length}</div><div class="scl">${m}</div><br><br><button class="nbtn" onclick="rst()">Restart quiz</button></div>`;return;
+  }
+  const q=questions[cq];const pct=Math.round((cq/questions.length)*100);
+  c.innerHTML=`<div style="font-size:12px;color:#888;margin-bottom:8px">Question ${cq+1} of ${questions.length}</div><div class="pbar"><div class="pb2" style="width:${pct}%"></div></div><div class="qt">${q.q}</div><div class="qopts">${q.opts.map((o,i)=>`<button class="qo" onclick="sa(${i})">${o}</button>`).join('')}</div><div class="qfb" id="qfb">${q.fb}</div><button class="nxt" id="nxt" onclick="nq()">Next question →</button>`;
+  ans=false;
+}
+function sa(i){if(ans)return;ans=true;const q=questions[cq];document.querySelectorAll('.qo').forEach((o,idx)=>{o.disabled=true;if(idx===q.correct)o.classList.add('ok');else if(idx===i&&i!==q.correct)o.classList.add('ng');});if(i===q.correct)sc++;document.getElementById('qfb').classList.add('on');const nb=document.getElementById('nxt');if(nb)nb.classList.add('on');}
+function nq(){cq++;rq();}
+function rst(){cq=0;sc=0;ans=false;rq();}
+rq();
+
+function sw(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  const m={lessons:0,glossary:1,sandbox:2,quiz:3};
+  document.querySelectorAll('.tb')[m[id]].classList.add('on');
+}
+</script>
+</body>
+</html>
